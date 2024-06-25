@@ -16,7 +16,7 @@ class UserGateway {
 
   Future<User?> getUser() async {
     var map = await _post('lookup', {});
-    if ((map['users'] as Map).isNotEmpty) {
+    if ((map['users'] as List).isNotEmpty) {
       return User.fromMap(map['users'][0]);
     }
     return null;
