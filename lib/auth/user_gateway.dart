@@ -6,8 +6,7 @@ import 'package:firedart/auth/token_provider.dart';
 class UserGateway {
   final UserClient _client;
 
-  UserGateway(KeyClient client, TokenProvider tokenProvider)
-      : _client = UserClient(client, tokenProvider);
+  UserGateway(KeyClient client, TokenProvider tokenProvider) : _client = UserClient(client, tokenProvider);
 
   Future<void> requestEmailVerification({String? langCode}) => _post(
         'sendOobCode',
@@ -15,9 +14,12 @@ class UserGateway {
         headers: {if (langCode != null) 'X-Firebase-Locale': langCode},
       );
 
-  Future<User> getUser() async {
+  Future<User?> getUser() async {
     var map = await _post('lookup', {});
-    return User.fromMap(map['users'][0]);
+    if ((map['users'] as Map).isNotEmpty) {
+      return User.fromMap(map['users'][0]);
+    }
+    return null;
   }
 
   Future<void> changePassword(String password) async {
@@ -38,10 +40,8 @@ class UserGateway {
     await _post('delete', {});
   }
 
-  Future<Map<String, dynamic>> _post<T>(String method, Map<String, String> body,
-      {Map<String, String>? headers}) async {
-    var requestUrl =
-        'https://identitytoolkit.googleapis.com/v1/accounts:$method';
+  Future<Map<String, dynamic>> _post<T>(String method, Map<String, String> body, {Map<String, String>? headers}) async {
+    var requestUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:$method';
 
     var response = await _client.post(
       Uri.parse(requestUrl),
