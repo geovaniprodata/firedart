@@ -41,18 +41,15 @@ Future main() async {
   });
 
   test('Fail sign-in on invalid email', () async {
-    await expectLater(
-        auth.signIn('bademail.com', 'bad_pass'), throwsA(isA<AuthException>()));
+    await expectLater(auth.signIn('bademail.com', 'bad_pass'), throwsA(isA<AuthException>()));
   });
 
   test('Fail sign-in on email not found', () async {
-    await expectLater(auth.signIn('bad@email.com', 'bad_pass'),
-        throwsA(isA<AuthException>()));
+    await expectLater(auth.signIn('bad@email.com', 'bad_pass'), throwsA(isA<AuthException>()));
   });
 
   test('Fail sign-in on bad password', () async {
-    await expectLater(
-        auth.signIn(email, 'bad_pass'), throwsA(isA<AuthException>()));
+    await expectLater(auth.signIn(email, 'bad_pass'), throwsA(isA<AuthException>()));
   });
 
   test('Fail to get user while logged out', () async {
@@ -78,14 +75,14 @@ Future main() async {
   test('Get user', () async {
     await auth.signIn(email, password);
     var user = await auth.getUser();
-    expect(user.email, email);
+    expect(user?.email, email);
   });
 
   test('Refresh token when expired', () async {
     await auth.signIn(email, password);
     tokenStore.expireToken();
     var user = await auth.getUser();
-    expect(user.email, isNotEmpty);
+    expect(user?.email, isNotEmpty);
     expect(auth.isSignedIn, true);
   });
 
@@ -112,8 +109,7 @@ Future main() async {
 
 Future<String> createCustomToken() => FirebaseAdmin.instance
     .initializeApp(AppOptions(
-      credential:
-          FirebaseAdmin.instance.certFromPath('test/service-account.json'),
+      credential: FirebaseAdmin.instance.certFromPath('test/service-account.json'),
     ))
     .auth()
     .createCustomToken('test');
